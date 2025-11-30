@@ -309,7 +309,7 @@ export const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
     }));
   };
 
-  const [currentStep, setCurrentStep] = useState(0);
+  // Show plans directly - no step system needed
 
   return (
     <div className="fixed inset-0 lg:left-16 bg-gradient-to-b from-slate-900 via-slate-950 to-[#070b14] flex items-start justify-center z-50 overflow-y-auto">
@@ -322,25 +322,18 @@ export const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
           <X className="w-5 h-5" />
         </button>
 
-        {/* Header Section */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-400/30 mb-6">
-            <Sparkles className="w-4 h-4 text-emerald-400" />
-            <span className="text-emerald-300 text-sm font-medium">Premium Plans</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-100 mb-4">
-            {currentStep === 0 ? (
-              <>Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Success Plan</span></>
-            ) : 'Confirm Your Order'}
+        {/* Simple Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-100 mb-2">
+            Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Success Plan</span>
           </h1>
-          <p className="text-slate-400 text-lg max-w-xl mx-auto">
-            {currentStep === 0 ? 'Invest in your career with our flexible pricing options' : 'Review your selection and complete your purchase'}
+          <p className="text-slate-400 text-sm">
+            Invest in your career with our flexible pricing options
           </p>
         </div>
 
         {/* Main Content Area */}
-        {currentStep === 0 && (
-          <>
+        <>
             {/* Desktop: Clean minimal cards like reference */}
             <div className="hidden lg:grid lg:grid-cols-3 gap-0">
               {allPlansWithAddOnOption.map((plan, index) => (
@@ -377,7 +370,10 @@ export const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedPlan(plan.id);
-                        setCurrentStep(1);
+                        // Scroll to checkout section
+                        setTimeout(() => {
+                          document.getElementById('pay-now-btn')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 100);
                       }}
                       className={`w-full py-3 rounded-lg font-medium transition-all duration-200 ${
                         plan.popular
@@ -482,7 +478,10 @@ export const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
                         }`}
                         onClick={() => {
                           setSelectedPlan(plan.id);
-                          setCurrentStep(1);
+                          // Scroll to checkout section
+                          setTimeout(() => {
+                            document.getElementById('pay-now-btn')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          }, 100);
                         }}
                       >
                         {/* Popular Badge */}
@@ -543,7 +542,10 @@ export const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedPlan(plan.id);
-                              setCurrentStep(1);
+                              // Scroll to checkout section
+                              setTimeout(() => {
+                                document.getElementById('pay-now-btn')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }, 100);
                             }}
                             className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
                               plan.popular
@@ -630,18 +632,29 @@ export const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
               </div>
             </div>
           </>
-        )}
 
-        {currentStep === 1 && (
-          <div className="space-y-6">
-            {/* Back Button */}
-            <button
-              onClick={() => setCurrentStep(0)}
-              className="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors"
-            >
-              <ChevronLeft className="w-5 h-5" />
-              <span>Back to Plans</span>
-            </button>
+        {/* Checkout Section - Shows when plan is selected */}
+        {selectedPlan && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 space-y-6"
+          >
+            {/* Selected Plan Indicator */}
+            <div className="bg-emerald-500/10 border border-emerald-400/30 rounded-xl p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <CheckCircle className="w-5 h-5 text-emerald-400" />
+                <span className="text-slate-200">
+                  Selected: <span className="font-semibold text-emerald-400">{selectedPlanData?.name}</span> - ₹{selectedPlanData?.price}
+                </span>
+              </div>
+              <button 
+                onClick={() => setSelectedPlan(null)}
+                className="text-slate-400 hover:text-slate-200 text-sm"
+              >
+                Change
+              </button>
+            </div>
 
             {/* Add-ons Section */}
             <div className="bg-slate-900/60 rounded-2xl border border-slate-700/50 p-6">
@@ -821,6 +834,7 @@ export const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
 
             {/* Checkout Button */}
             <button
+              id="pay-now-btn"
               onClick={handlePayment}
               disabled={isProcessing}
               className="w-full py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white text-lg font-semibold rounded-xl hover:from-emerald-400 hover:to-cyan-400 shadow-lg shadow-emerald-500/25 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
@@ -835,7 +849,7 @@ export const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
                 </>
               )}
             </button>
-          </div>
+          </motion.div>
         )}
       </div>
     </div>

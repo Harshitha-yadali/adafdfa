@@ -505,7 +505,15 @@ const handleDiwaliCTAClick = useCallback(() => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/tutorials" element={<Tutorials />} />
           <Route path="/all-tools" element={<ToolsAndPagesNavigation {...commonPageProps} />} />
-          <Route path="/pricing" element={<PricingPage onShowAuth={handleShowAuth} onShowSubscriptionPlans={handleShowPlanSelection} />} />
+          <Route path="/pricing" element={
+            <SubscriptionPlans
+              isOpen={true}
+              onNavigateBack={() => navigate(-1)}
+              onSubscriptionSuccess={handleSubscriptionSuccess}
+              onShowAlert={handleShowAlert}
+              initialExpandAddons={false}
+            />
+          } />
           <Route path="/careers" element={<CareersPage {...commonPageProps} />} />
           <Route path="/careers/:jobId" element={<JobDetailsPage {...commonPageProps} />} />
           <Route path="/jobs" element={<JobsPage {...commonPageProps} onShowProfile={handleShowProfile} />} />
